@@ -169,79 +169,37 @@
 	<!-- JavaScript -->
 	<script type="text/javascript">
 		//code for unique email submission from users to the database
-		$(document)
-				.ready(
-						function() {
-							$("#buttonEdit")
-									.on(
-											"click",
-											function() {
-												$("#editAction")
-														.click(
-																function checkEmailUnique(
-																		form) {
-																	url = "[[@{/users/check_email}]]";
-																	userEmail = $(
-																			"#email")
-																			.val();
+		$(document).ready(function() {
+		$("#buttonEdit").on("click", function() {
+		$("#editAction").click(function checkEmailUnique(form) {
+			url = "[[@{/users/check_email}]]";
+			userEmail = $("#email").val();
+			userId = $("#id").val();
+			csrfValue = $("input[name='_csrf']").val();
+			params = {id : userId,
+					 email : userEmail,
+					 _csrf : csrfValue};
+			$("#modalDialog").modal();
+		});
+		
+		$.post(url, params, function(response) {
+				if (response == "OK") {
+					form.submit();
+				} else if (response == "Duplicated") {
+					showModalDialog("Warning", "There is another user using this email " + userEmail);
+				} else {showModalDialog("Error", "Unknown response from server");
+					}  // alert("Response from server: " + response);
+				}).fail(function() {showModalDialog("Error", "Could not connect to the server");
+			});
+				return false;
 
-																	userId = $(
-																			"#id")
-																			.val();
-
-																	csrfValue = $(
-																			"input[name='_csrf']")
-																			.val();
-																	params = {
-																		id : userId,
-																		email : userEmail,
-																		_csrf : csrfValue
-																	};
-
-																	$(
-																			"#modalDialog")
-																			.modal();
-
-																});
-												$
-														.post(
-																url,
-																params,
-																function(
-																		response) {
-																	if (response == "OK") {
-																		form
-																				.submit();
-																	} else if (response == "Duplicated") {
-																		showModalDialog(
-																				"Warning",
-																				"There is another user using this email "
-																						+ userEmail);
-																	} else {
-																		showModalDialog(
-																				"Error",
-																				"Unknown response from server");
-																	}
-																	// alert("Response from server: " + response);
-																})
-														.fail(
-																function() {
-																	showModalDialog(
-																			"Error",
-																			"Could not connect to the server");
-																});
-												return false;
-
-												function showModalDialog(title,
-														message) {
-													$("#modalTitle")
-															.text(title);
-													$("#modalBody").text(
-															message);
-													$("#modalDialog").modal();
-												}
-											});
-						});
+	 	function showModalDialog(title, message) {
+				$("#modalTitle").text(title);
+				$("#modalBody").text(message);
+				$("#modalDialog").modal(); 
+			}
+		});
+	});
 	</script>
 
 	<script type="text/javascript" th:src="@{/users}">
