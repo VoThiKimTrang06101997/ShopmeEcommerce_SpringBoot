@@ -30,25 +30,31 @@ public class UserService {
 	public List<Role> listRoles() {
 		return (List<Role>) roleRepository.findAll();
 	}
-
+	
 	public User save(User user) {
 		boolean isUpdatingUser = (user.getId() != null);
-
+		
 		if (isUpdatingUser) {
 			User existingUser = userRepository.findById(user.getId()).get();
-
+			
 			if (user.getPassword().isEmpty()) {
 				user.setPassword(existingUser.getPassword());
 			} else {
 				encodePassword(user);
 			}
-
-		} else {
+			
+		} else {		
 			encodePassword(user);
 		}
-
+		
 		return userRepository.save(user);
 	}
+	
+//	public User save(User user) {
+//		encodePassword(user);
+//		return userRepository.save(user);
+//	}
+	
 
 	public void encodePassword(User user) {
 		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
@@ -81,6 +87,18 @@ public class UserService {
 		} catch (NoSuchElementException ex) {
 			throw new UserNotFoundException("Could not find any user with ID: " + id);
 		}
+	}
+
+	public void delete(Integer id) throws UserNotFoundException {
+		Long countById = userRepository.countById(id);
+		if (countById == null || countById == 0) {
+			throw new UserNotFoundException("Could not find any user with ID: " + id);
+		}
+		userRepository.deleteById(id);
+	}
+	
+	public void updateUserEnabledStatus(Integer id, boolean enabled) {
+		userRepository.updateEnabledStatus(id, enabled);
 	}
 
 }

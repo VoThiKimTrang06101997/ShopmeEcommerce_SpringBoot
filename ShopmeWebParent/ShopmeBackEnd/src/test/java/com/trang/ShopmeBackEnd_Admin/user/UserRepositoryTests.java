@@ -24,63 +24,63 @@ public class UserRepositoryTests {
 	@Autowired
 	private TestEntityManager testEntityManager;
 
-//	@Test
-//	public void testCreateNewUserWithOneRole() {
-//		Role roleAdmin = testEntityManager.find(Role.class, 1);
-//		User user = new User("trang@gmail.com", "123456", "Võ Thị", "Kim Trang");
-//		user.addRole(roleAdmin);
-//
-//		User savedUser = userRepository.save(user);
-//		assertThat(savedUser.getId()).isGreaterThan(0);
-//	}
-//
-//	@Test
-//	public void testCreateNewUserWithTwoRoles() {
-//		User userRavi = new User("ravi@gmail.com", "ravi123", "Ravi", "Kumar");
-//		Role roleEditor = new Role(3);
-//		Role roleAssistant = new Role(5);
-//
-//		userRavi.addRole(roleEditor);
-//		userRavi.addRole(roleAssistant);
-//
-//		User savedUserRavi = userRepository.save(userRavi);
-//
-//		assertThat(savedUserRavi.getId()).isGreaterThan(0);
-//	}
-//
-//	@Test
-//	public void testListAllUsers() {
-//		Iterable<User> listUsers = userRepository.findAll();
-//		listUsers.forEach(user -> System.out.println(user));
-//	}
-//
-//	@Test
-//	public void testGetUserById() {
-//		User userTrang = userRepository.findById(1).get();
-//		System.out.println(userTrang);
-//		assertThat(userTrang).isNotNull();
-//	}
-//
-//	@Test
-//	public void testUpdateUserDetails() {
-//		User userTrang = userRepository.findById(1).get();
-//		userTrang.setEnabled(true);
-//		userTrang.setEmail("trang123@gmail.com");
-//
-//		userRepository.save(userTrang);
-//	}
-//
-//	@Test
-//	public void testUpdateUserRoles() {
-//		User userRavi = userRepository.findById(2).get();
-//		Role roleEditor = new Role(3);
-//		Role roleSalePerson = new Role(2);
-//
-//		userRavi.getRoles().remove(roleEditor);
-//		userRavi.addRole(roleSalePerson);
-//
-//		userRepository.save(userRavi);
-//	}
+	@Test
+	public void testCreateNewUserWithOneRole() {
+		Role roleAdmin = testEntityManager.find(Role.class, 1);
+		User user = new User("trang@gmail.com", "123456", "Võ Thị", "Kim Trang");
+		user.addRole(roleAdmin);
+
+		User savedUser = userRepository.save(user);
+		assertThat(savedUser.getId()).isGreaterThan(0);
+	}
+
+	@Test
+	public void testCreateNewUserWithTwoRoles() {
+		User userRavi = new User("ravi@gmail.com", "ravi123", "Ravi", "Kumar");
+		Role roleEditor = new Role(3);
+		Role roleAssistant = new Role(5);
+
+		userRavi.addRole(roleEditor);
+		userRavi.addRole(roleAssistant);
+
+		User savedUserRavi = userRepository.save(userRavi);
+
+		assertThat(savedUserRavi.getId()).isGreaterThan(0);
+	}
+
+	@Test
+	public void testListAllUsers() {
+		Iterable<User> listUsers = userRepository.findAll();
+		listUsers.forEach(user -> System.out.println(user));
+	}
+
+	@Test
+	public void testGetUserById() {
+		User userTrang = userRepository.findById(1).get();
+		System.out.println(userTrang);
+		assertThat(userTrang).isNotNull();
+	}
+
+	@Test
+	public void testUpdateUserDetails() {
+		User userTrang = userRepository.findById(1).get();
+		userTrang.setEnabled(true);
+		userTrang.setEmail("trang123@gmail.com");
+
+		userRepository.save(userTrang);
+	}
+
+	@Test
+	public void testUpdateUserRoles() {
+		User userRavi = userRepository.findById(2).get();
+		Role roleEditor = new Role(3);
+		Role roleSalePerson = new Role(2);
+
+		userRavi.getRoles().remove(roleEditor);
+		userRavi.addRole(roleSalePerson);
+
+		userRepository.save(userRavi);
+	}
 
 	@Test
 	public void testDeleteUser() {
@@ -96,6 +96,26 @@ public class UserRepositoryTests {
 		User user = userRepository.getUserByEmail(email);
 		
 		assertThat(user).isNotNull();
+	}
+	
+	@Test
+	public void testCountById() {
+		Integer id = 100;
+		Long countById = userRepository.countById(id);
+		
+		assertThat(countById).isNotNull().isGreaterThan(0);
+	}
+	
+	@Test
+	public void testDisableUser() {
+		Integer id = 1;
+		userRepository.updateEnabledStatus(id, false);
+	}
+	
+	@Test
+	public void testEnableUser() {
+		Integer id = 2;
+		userRepository.updateEnabledStatus(id, true);
 	}
 
 }
