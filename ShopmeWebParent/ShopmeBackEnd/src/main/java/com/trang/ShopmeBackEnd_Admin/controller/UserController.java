@@ -1,9 +1,11 @@
 package com.trang.ShopmeBackEnd_Admin.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -30,8 +32,39 @@ public class UserController {
 	private UserService userService;
 
 	@GetMapping("/users")
-	public String listAllUsers(Model model) {
-		List<User> listUsers = userService.listAllUsers();
+	public String listFirstPage(Model model) {
+//		List<User> listUsers = userService.listAllUsers();
+//		model.addAttribute("listUsers", listUsers);
+//		return "users";
+
+		return listByPage(1, model);
+	}
+
+	@GetMapping("/users/page/{pageNum}")
+	public String listByPage(@PathVariable(name = "pageNum") int pageNum, Model model) {
+		Page<User> page = userService.listByPage(pageNum);
+		List<User> listUsers = page.getContent();
+
+//		System.out.println("Pagenum = " + pageNum);
+//		System.out.println("Total elements = " + page.getTotalElements());
+//		System.out.println("Total pages = " + page.getTotalPages());
+		long startCount = (pageNum - 1) * userService.USER_PER_PAGE + 1;
+		long endCount = startCount + userService.USER_PER_PAGE - 1;
+		if (endCount > page.getTotalElements()) {
+			endCount = page.getTotalElements();
+		}
+		
+		model.addAttribute("currentPage", pageNum);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("startCount", startCount);
+		model.addAttribute("endCount", endCount);
+
+//		 Code cách này sẽ ra kết quả là User Not Found
+//		 model.addAttribute("totalItems", page.getTotalElements());
+//		 model.addAttribute("listUsers", new ArrayList<User>());
+		
+		
+		model.addAttribute("totalItems", page.getTotalElements());
 		model.addAttribute("listUsers", listUsers);
 		return "users";
 	}
@@ -53,27 +86,26 @@ public class UserController {
 	@ModelAttribute(value = "user")
 	// @RequestMapping(method = RequestMethod.POST)
 	public String saveUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
-			@RequestParam("image") MultipartFile multipartFile ) throws IOException {
-		if(!multipartFile.isEmpty()) {
+			@RequestParam("image") MultipartFile multipartFile) throws IOException {
+		if (!multipartFile.isEmpty()) {
 			String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 			user.setPhotos(fileName);
 			User savedUser = userService.save(user);
-			
+
 			String uploadDir = "user-photos/" + savedUser.getId();
-			
+
 			FileUploadUtil.cleanDir(uploadDir);
 			FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 		} else {
-			if(user.getPhotos().isEmpty()) {
+			if (user.getPhotos().isEmpty()) {
 				user.setPhotos(null);
 				userService.save(user);
 			}
 		}
 		// System.out.println(user);
 		// System.out.println(multipartFile.getOriginalFilename());
-		
+
 		// model.addAttribute("user", user);
-		
 
 		redirectAttributes.addFlashAttribute("message", "The User had been saved successfully !");
 		return "redirect:/users";
@@ -126,6 +158,5 @@ public class UserController {
 
 		return "redirect:/users";
 	}
-	
-	
+
 }

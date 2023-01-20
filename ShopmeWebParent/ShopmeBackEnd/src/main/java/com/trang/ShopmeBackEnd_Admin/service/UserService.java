@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +15,13 @@ import com.trang.ShopmeBackEnd_Admin.repository.UserRepository;
 import com.trang.ShopmeCommon.entity.Role;
 import com.trang.ShopmeCommon.entity.User;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserService {
+	public static final int USER_PER_PAGE = 4;
+	
 	@Autowired
 	private UserRepository userRepository;
 
@@ -26,6 +34,14 @@ public class UserService {
 	public List<User> listAllUsers() {
 		return (List<User>) userRepository.findAll();
 	}
+	
+	public Page<User> listByPage(int pageNum){
+
+		Pageable pageable = PageRequest.of(pageNum - 1, USER_PER_PAGE);
+
+		return userRepository.findAll(pageable);
+
+		}
 
 	public List<Role> listRoles() {
 		return (List<Role>) roleRepository.findAll();
@@ -35,7 +51,8 @@ public class UserService {
 		boolean isUpdatingUser = (user.getId() != null);
 		
 		if (isUpdatingUser) {
-			User existingUser = userRepository.findById(user.getId()).get();
+			// User existingUser = userRepository.findById(user.getId()).get();
+			User existingUser = userRepository.findById(user.getId());
 			
 			if (user.getPassword().isEmpty()) {
 				user.setPassword(existingUser.getPassword());
@@ -83,7 +100,8 @@ public class UserService {
 
 	public User get(Integer id) throws UserNotFoundException {
 		try {
-			return userRepository.findById(id).get();
+			// return (User) userRepository.findById(id).get();
+			return (User) userRepository.findById(id);
 		} catch (NoSuchElementException ex) {
 			throw new UserNotFoundException("Could not find any user with ID: " + id);
 		}
