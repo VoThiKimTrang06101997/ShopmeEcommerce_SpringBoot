@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Repository;
 
 import com.trang.ShopmeCommon.entity.User;
@@ -25,6 +24,10 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	public User getUserByEmail(@Param("email") String email);
 	
 	public Long countById(Integer id);
+	
+	@Query("SELECT u FROM User u WHERE CONCAT(u.id, ' ', u.email, ' ', u.firstName, ' ',"
+			+ " u.lastName) LIKE %?1%")
+	public Page<User> findAll(String keyword, Pageable pageable);
 	
 	@Query(value = "UPDATE User u SET u.enabled = ?2 WHERE u.id = ?1")
 	@Modifying
