@@ -79,5 +79,10 @@ public class User {
 		return "/user-photos/" + this.id + "/" + this.photos;
 	}
 
+	public User get() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
