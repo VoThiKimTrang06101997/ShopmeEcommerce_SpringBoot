@@ -68,7 +68,10 @@
 		</div>
 		<div class="text-danger">
 			<h2 class="text-center">Manage Users</h2>
-			<a th:href="@{/users/new}">Create New User</a>
+			<a th:href="@{/users/new}" class="fas fa-user-plus fa-2x icon-dark mr-2 text-primary"></a>
+			<a th:href="@{/users/export/csv}" class="fas fa-file-csv fa-2x icon-dark mr-2 text-warning"></a>
+			<a th:href="@{/users/export/excel}" class="fas fa-file-excel fa-2x icon-dark mr-2 text-success"></a>		
+		
 		</div>
 
 		<div th:if="${message != null}"
