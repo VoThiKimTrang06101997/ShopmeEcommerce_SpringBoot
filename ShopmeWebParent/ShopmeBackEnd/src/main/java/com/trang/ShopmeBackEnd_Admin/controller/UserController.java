@@ -25,6 +25,7 @@ import com.trang.ShopmeBackEnd_Admin.FileUploadUtil;
 import com.trang.ShopmeBackEnd_Admin.service.UserCSVExporter;
 import com.trang.ShopmeBackEnd_Admin.service.UserExcelExporter;
 import com.trang.ShopmeBackEnd_Admin.service.UserNotFoundException;
+import com.trang.ShopmeBackEnd_Admin.service.UserPdfExporter;
 import com.trang.ShopmeBackEnd_Admin.service.UserService;
 import com.trang.ShopmeCommon.entity.Role;
 import com.trang.ShopmeCommon.entity.User;
@@ -195,6 +196,13 @@ public class UserController {
 	public void exportToExcel(HttpServletResponse response) throws IOException {
 		List<User> listUsers = userService.listAllUsers();
 		UserExcelExporter ExcelExporter = new UserExcelExporter();
+		ExcelExporter.export(listUsers, response);
+	}
+	
+	@GetMapping("/users/export/pdf")
+	public void exportToPDF(HttpServletResponse response) throws IOException {
+		List<User> listUsers = userService.listAllUsers();
+		UserPdfExporter ExcelExporter = new UserPdfExporter();
 		ExcelExporter.export(listUsers, response);
 	}
 }
