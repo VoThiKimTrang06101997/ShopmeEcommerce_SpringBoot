@@ -9,4 +9,9 @@ public class MainController {
 	public String viewAdminPage() {
 		return "index";
 	}
+	
+	@GetMapping("/login")
+	public String viewLoginPage() {
+		return "login";
+	}
 }
