@@ -22,11 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.trang.ShopmeBackEnd_Admin.FileUploadUtil;
-import com.trang.ShopmeBackEnd_Admin.service.UserCSVExporter;
-import com.trang.ShopmeBackEnd_Admin.service.UserExcelExporter;
+
 import com.trang.ShopmeBackEnd_Admin.service.UserNotFoundException;
-import com.trang.ShopmeBackEnd_Admin.service.UserPdfExporter;
+
 import com.trang.ShopmeBackEnd_Admin.service.UserService;
+import com.trang.ShopmeBackEnd_Admin.service.export.UserCSVExporter;
+import com.trang.ShopmeBackEnd_Admin.service.export.UserExcelExporter;
+import com.trang.ShopmeBackEnd_Admin.service.export.UserPdfExporter;
 import com.trang.ShopmeCommon.entity.Role;
 import com.trang.ShopmeCommon.entity.User;
 
@@ -102,10 +104,38 @@ public class UserController {
 		return "user_form";
 	}
 
+//	@PostMapping("/users/save")
+//	@ModelAttribute(value = "user")
+//	// @RequestMapping(method = RequestMethod.POST)
+//	public String saveUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
+//			@RequestParam("image") MultipartFile multipartFile) throws IOException {
+//		if (!multipartFile.isEmpty()) {
+//			String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+//			user.setPhotos(fileName);
+//			User savedUser = userService.save(user);
+//
+//			String uploadDir = "user-photos/" + savedUser.getId();
+//
+//			FileUploadUtil.cleanDir(uploadDir);
+//			FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+//		} else {
+//			if (user.getPhotos().isEmpty()) {
+//				user.setPhotos(null);
+//				userService.save(user);
+//			}
+//		}
+//		// System.out.println(user);
+//		// System.out.println(multipartFile.getOriginalFilename());
+//
+//		// model.addAttribute("user", user);
+//
+//		redirectAttributes.addFlashAttribute("message", "The User had been saved successfully !");
+//		
+//		return getRedirectURLtoAffectedUser(user);
+//	}
+	
 	@PostMapping("/users/save")
-	@ModelAttribute(value = "user")
-	// @RequestMapping(method = RequestMethod.POST)
-	public String saveUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes,
+	public String saveUser(User user, RedirectAttributes redirectAttributes,
 			@RequestParam("image") MultipartFile multipartFile) throws IOException {
 		if (!multipartFile.isEmpty()) {
 			String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
@@ -136,7 +166,7 @@ public class UserController {
 		String firstPartOfEmail = user.getEmail().split("@")[0];
 		return "redirect:/users/page/1?sortField=id&sortDir=asc&keyword=" + firstPartOfEmail;
 	}
-
+	
 	@GetMapping("/users/edit/{id}")
 	public String editUser(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes, Model model) {
 		try {

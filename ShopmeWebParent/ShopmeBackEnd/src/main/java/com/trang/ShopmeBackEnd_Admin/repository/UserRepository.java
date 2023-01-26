@@ -39,6 +39,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	public List<User> findAll();
 	
 	public User findById(Integer id);
+	
+	public User findById(User user);
 
 	public User save(User user);
 

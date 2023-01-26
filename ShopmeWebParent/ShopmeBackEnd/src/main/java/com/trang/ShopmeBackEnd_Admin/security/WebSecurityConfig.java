@@ -40,14 +40,24 @@ public class WebSecurityConfig extends WebSecurityConfiguration {
 		return authenticationProvider;
 	}
 
-	 protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		 auth.authenticationProvider(authenticationProvider());
-	    }
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(authenticationProvider());
+	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests().anyRequest().authenticated().and().formLogin().loginPage("/login")
-				.usernameParameter("email").permitAll();
+		http.authorizeHttpRequests()
+			.anyRequest().authenticated()
+			.and()
+			.formLogin()
+				.loginPage("/login")
+				.usernameParameter("email")
+				.permitAll()
+			.and().logout().permitAll()
+			.and()
+				.rememberMe()
+					.key("AbcDefgHijKlmnOpQrs_1234567890")
+					.tokenValiditySeconds(7 * 24 * 60 * 60);    // 1 week = 7 days * 24 hours/per day * 60 minutes * 60 seconds
 
 //		http.authorizeHttpRequests()
 //		.requestMatchers("/", "/ShopAdmin/**", "/register", "/h2-console/**").permitAll()

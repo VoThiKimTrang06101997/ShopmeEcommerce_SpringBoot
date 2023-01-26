@@ -31,6 +31,10 @@ public class UserService {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	public User getByEmail(String email) {
+		return userRepository.getUserByEmail(email);
+	}
 
 	public List<User> listAllUsers() {
 		return (List<User>) userRepository.findAll(Sort.by("firstName").ascending());
@@ -79,6 +83,23 @@ public class UserService {
 //		return userRepository.save(user);
 //	}
 	
+	public User updateAccount(User userInForm) {
+		User userInDatabase = userRepository.findById(userInForm.getId()).get();
+		
+		if(!userInForm.getPassword().isEmpty()) {
+			userInDatabase.setPassword(userInForm.getPassword());
+			encodePassword(userInDatabase);
+		} 
+		
+		if(userInForm.getPhotos() != null) {
+			userInDatabase.setPhotos(userInForm.getPhotos());
+		}
+		
+		userInDatabase.setFirstName(userInForm.getFirstName());
+		userInDatabase.setLastName(userInForm.getLastName());
+		
+		return userRepository.save(userInDatabase);
+	}
 
 	public void encodePassword(User user) {
 		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
@@ -125,5 +146,6 @@ public class UserService {
 	public void updateUserEnabledStatus(Integer id, boolean enabled) {
 		userRepository.updateEnabledStatus(id, enabled);
 	}
+	
 
 }

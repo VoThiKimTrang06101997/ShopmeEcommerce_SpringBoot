@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments :: page_head(${pageTitle})" />
+<head th:replace="fragments :: page_head('Your Account Details')" />
 
 <!-- <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %> -->
@@ -10,22 +10,23 @@
 	<div class="container-fluid">
 		<div th:replace="navigation :: menu"></div>
 		
-		<div class="text-danger text-center">
-			<h2>Manage Users || [[${pageTitle}]]</h2>
-		</div>
-
-		<form th:action="@{/users/save}" method="post"
+		<form th:action="@{/account/update}" method="post"
 			style="max-width: 700px; margin: 0 auto" 
 			th:object="${user}"
-			enctype="multipart/form-data"
-			onsubmit="return checkEmailUnique(this);">
+			enctype="multipart/form-data">
 			<input type="hidden" th:field="*{id}" />
+			<div class="text-danger text-center">
+				<h2>Your Account Details</h2>
+			</div>
+			
+			<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]</div>
+		
 			<div class="border border-secondary rouded p-3">
 				<div class="form-group row">
 					<label class="col sm-4 col-form-label text-success">E-mail:</label>
 					<div class="col-sm-8">
-						<input type="email" class="form-control" th:field="*{email}"
-							required minlength="8" maxlength="128" />
+						<input type="email" class="form-control" th:field="*{email}" readonly="readonly" />
 					</div>
 				</div>
 
@@ -48,32 +49,30 @@
 				</div>
 
 				<div class="form-group row">
-					<label class="col-sm-4 col-form-label">Password:</label>
+					<label class="col-sm-4 col-form-label text-success">Password:</label>
 					<div class="col-sm-8">
-						<input th:if="${user.id == null}" type="password" class="form-control" 
-						th:field="*{password}" required minlength="6" maxlength="20"  />
-					
-						<input th:if="${user.id != null}" type="password" class="form-control" 
-						th:field="*{password}" minlength="6" maxlength="20"  />				
+						<input type="password" th:field="*{password}" class="form-control"
+						placeholder="Leave blank if you don't want to change password"
+						minlength="6" maxlength="20"
+						oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+						 />			
+					</div>
+				</div>	
+				
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label text-success">Confirm Password:</label>
+					<div class="col-sm-8">
+						<input type="password" id="confirmPassword" class="form-control" 
+						minlength="6" maxlength="20" 
+						oninput="checkPasswordMatch(this)"
+						 />			
 					</div>
 				</div>	
 
 				<div class="form-group row">
-					<label class="col sm-4 col-form-label text-success">Roles:</label>
+					<label class="col sm-4 col-form-label text-success">Assigned Roles:</label>
 					<div class="col-sm-8">
-						<th:block th:each="role: ${listRoles}">
-							<input type="checkbox" th:field="*{roles}" th:text="${role.name}"
-								th:value="${role.id}" class="m-2" />
-							- <small class="text-primary">[[${role.description}]]</small>
-							<br />
-						</th:block>
-					</div>
-				</div>
-
-				<div class="form-group row">
-					<label class="col sm-4 col-form-label text-success">Enabled:</label>
-					<div class="col-sm-8">
-						<input type="checkbox" th:field="*{enabled}" />
+						<span><b>[[${user.roles}]]</b></span>
 					</div>
 				</div>
 				
@@ -130,85 +129,6 @@
 	</div>
 
 	<!-- JavaScript -->	
-	<script type="text/javascript">
-	MAX_FILE_SIZE = 102400; // 100KB
-	
-	moduleURL = "[[@{/users}]]";
-	
-	$(document).ready(function(){
-		$("#buttonEdit").on("click", function() {
-			$("#editAction").click(function checkEmailUnique(form) {
-				function checkEmailUnique(form) {
-					url = "[[@{/users/check_email}]]";
-					userEmail = $("#email").val();
-					userId = $("#id").val();
-					csrfValue = $("input[name='_csrf']").val();
-					
-					params = {id: userId, email: userEmail, _csrf: csrfValue};
-					
-					$.post(url, params, function(response) {
-						if (response == "OK") {
-							form.submit();
-						} else if (response == "Duplicated") {
-							showWarningModal("There is another user having the email " + userEmail);
-						} else {
-							showErrorModal("Unknown response from server");
-						}
-					}).fail(function() {
-						showErrorModal("Could not connect to the server");
-					});
-				
-					return false;
-					
-					function showModalDialog(title, message) {
-						$("#modalTitle").text(title);
-						$("#modalBody").text(message);
-						$("#modalDialog").modal(); 
-					}
-				}
-			})
-		})
-	})
-	</script>
-	
-	<!-- 
-	<script type="text/javascript">
-		//code for unique email submission from users to the database
-		$(document).ready(function() {
-		$("#buttonEdit").on("click", function() {
-		$("#editAction").click(function checkEmailUnique(form) {
-			url = "[[@{/users/check_email}]]";
-			userEmail = $("#email").val();
-			userId = $("#id").val();
-			csrfValue = $("input[name='_csrf']").val();
-			params = {id : userId,
-					 email : userEmail,
-					 _csrf : csrfValue};
-			$("#modalDialog").modal();
-		});
-		
-		$.post(url, params, function(response) {
-				if (response == "OK") {
-					form.submit();
-				} else if (response == "Duplicated") {
-					showModalDialog("Warning", "There is another user using this email " + userEmail);
-				} else {showModalDialog("Error", "Unknown response from server");
-					}  // alert("Response from server: " + response);
-				}).fail(function() {showModalDialog("Error", "Could not connect to the server");
-			});
-				return false;
-
-	 	function showModalDialog(title, message) {
-				$("#modalTitle").text(title);
-				$("#modalBody").text(message);
-				$("#modalDialog").modal(); 
-			}
-		});
-	});
-	</script>
-	
-	 -->
-	 
 	 <!-- Xử lý chức năng Button Cancel quay trở về trang User -->
 	<script type="text/javascript" th:src="@{/users}">
 		$(document).ready(function() {
@@ -248,7 +168,15 @@
 			})	
 		}		
 			reader.readAsDataURL(file);
+	}
+	
+	function checkPasswordMatch(confirmPassword) {
+		if(confirmPassword.value != $("#password").val()) {
+			confirmPassword.setCustomValidity("Password do not match!");
+		} else {
+			confirmPassword.setCustomValidity("");
 		}
+	}
 	</script>
 </body>
 </html>
