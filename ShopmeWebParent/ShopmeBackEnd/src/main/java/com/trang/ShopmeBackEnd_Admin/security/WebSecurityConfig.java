@@ -47,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests()
+			.requestMatchers("/users/**").hasAuthority("Admin")
 			.anyRequest().authenticated()
 			.and()
 			.formLogin()
@@ -58,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfiguration {
 				.rememberMe()
 					.key("AbcDefgHijKlmnOpQrs_1234567890")
 					.tokenValiditySeconds(7 * 24 * 60 * 60);    // 1 week = 7 days * 24 hours/per day * 60 minutes * 60 seconds
-
+			
 //		http.authorizeHttpRequests()
 //		.requestMatchers("/", "/ShopAdmin/**", "/register", "/h2-console/**").permitAll()
 //		.requestMatchers("/admin/**").hasRole("ADMIN")
