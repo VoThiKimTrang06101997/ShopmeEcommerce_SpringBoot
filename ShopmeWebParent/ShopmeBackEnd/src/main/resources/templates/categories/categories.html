@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments :: page_head('Categories - Shopme Admin')" />
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: menu"></div>
+
+		<div class="text-danger">
+			<h2 class="text-center">Manage Categories</h2>
+			<a th:href="@{/categories/new}"
+				class="fas fa-user-plus fa-2x icon-dark mr-2 text-primary">
+			</a>
+			&nbsp;|&nbsp; 
+			<a th:href="@{/categories/export/csv}"
+				class="fas fa-file-csv fa-2x icon-dark mr-2 text-warning">
+			</a>
+			&nbsp;|&nbsp; 
+			<a th:href="@{/categories/export/excel}"
+				class="fas fa-file-excel fa-2x icon-dark mr-2 text-success">
+			</a>
+			&nbsp;|&nbsp; 
+			<a th:href="@{/categories/export/pdf}"
+				class="fas fa-file-pdf fa-2x icon-dark text-danger">
+			</a>
+		</div>
+
+		<!-- Search Filter -->
+		<div th:replace="fragments :: search_form_and_message('/categories/page/1')"></div>
+		
+		<!-- Code chưa Refactor 
+		<div>
+			<form th:action="@{/categories/page/1}" class="form-inline m-3">
+				<input type="hidden" name="sortField" th:value="${sortField}" /> <input
+					type="hidden" name="sortDir" th:value="${sortDir}" />
+				Filter:&nbsp; <input type="search" name="keyword"
+					th:value="${keyword}" class="form-control" required />
+				&nbsp;&nbsp;
+				<button type="submit" value="Search" class="btn btn-primary">
+					<i class="fas fa-search"></i>
+				</button>
+				&nbsp;&nbsp; <a id="clearAction">
+					<button type="button" value="Clear" class="btn btn-secondary"
+						id="clearButton" onclick="clearFilter()">
+						<i class="fas fa-eraser"></i>
+					</button>
+				</a>
+			</form>
+		</div>
+		-->
+
+		<div class="full-details">
+			<table
+				class="table table-bordered table-striped table-hover table-responsive-xl">
+				<thead class="thead-dark">
+					<tr>
+						<th>ID</th>
+						<th>Category Image</th>
+						
+							<!-- Code chưa Refactor
+							<th>
+								<a class="text-white" 
+								th:href="@{'/categories/page/' + ${currentPage} + '?sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
+								Category Name
+								</a>
+								
+								<span th:class="${reverseSortDir == 'desc' ? 'fas fa-sort-up': 'fas fa-sort-down'}">
+								</span>
+							</th>
+							 -->
+							 
+						<th th:replace="fragments :: column_link('/categories', 'name', 'Category Name','none')"/>
+						<th th:class="hideable-column">Alias</th>
+						<th>Enabled</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr th:each="categories: ${listCategories}">
+						<td>[[${categories.id}]]</td>
+						<td>
+							<img th:src="@{${categories.imagePath}}" style="width: 100px" class="img-fluid">
+						</td>
+						<td>[[${categories.name}]]</td>
+						<td>[[${categories.alias}]]</td>
+						
+						<td>
+							<!-- Code chưa Refactor 
+							<div th:replace="fragments :: category_status" />
+							-->
+							
+							<div th:replace="fragments :: status(${categories.enabled}, 'category', '/categories/' + ${categories.id})" />
+							&nbsp;
+						</td>
+
+						<td>
+						<!-- Code chưa Refactor
+                			<div th:replace="fragments :: category_actions" />
+                		 -->
+                		 
+							<div th:replace="fragments :: edit('category', '/categories/edit/' + ${categories.id})" />
+							 &nbsp;
+                    		<div th:replace="fragments :: delete('category', ${categories.id}, '/categories/delete/' + ${categories.id}, ${!categories.hasChildren})" />
+						</td>
+						 
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+	<!-- Responsive -->	
+    <div class="less-details">
+        <div th:each="categories : ${listCategories}" class="row m-1">
+            <div class="col-4">
+                <img th:src="@{${categories.imagePath}}" style="width: 100px" class="img-fluid"/>
+            </div>
+            <div class="col-8">
+                <div>[[${categories.name}]]</div>
+                <div class="mt-2">
+                	<div th:replace="fragments :: status(${categories.enabled}, 'category', '/categories/' + ${categories.id})" />
+                	&nbsp;
+                	
+                	<div th:replace="fragments :: edit('category', '/categories/edit/' + ${categories.id})" />
+					&nbsp;
+                    <div th:replace="fragments :: delete('category', ${categories.id}, '/categories/delete/' + ${categories.id}, ${!categories.hasChildren})" />
+                      
+                </div>
+            </div>
+            <div>&nbsp;</div>
+        </div>
+    </div>
+	
+		<!-- Pagination -->
+		<div th:if="${keyword != null}" class="text-center">
+			<span>Search result does not show categories in hierarchical form</span>
+			<div th:replace="fragments :: pagination('/categories', 'categories')"></div>
+		</div>
+		
+		<th:block th:unless="${keyword != null}">
+			<div th:replace="fragments :: pagination('/categories', 'categories')"></div>
+		</th:block>
+		
+					
+		<!-- Modal -->
+		<div th:replace="modal_fragments :: confirm_modal"></div>
+		
+		<!-- Footer -->
+		<div th:replace="fragments :: footer"></div>
+
+	</div>
+
+	<!-- JavaScript -->
+	<script th:src="@{/javascript/common_form.js}"></script>
+	<script th:src="@{/javascript/common_list.js}"></script>
+	
+	<script type="text/javascript">
+		moduleURL = "[[@{/categories}]]";
+		
+		$(document).ready(function() {
+			$(".link-delete").on("click", function(e) {
+				e.preventDefault();
+				showDeleteConfirmModal($(this), 'category');
+			})
+		})
+	</script>
+
+</body>
+</html>

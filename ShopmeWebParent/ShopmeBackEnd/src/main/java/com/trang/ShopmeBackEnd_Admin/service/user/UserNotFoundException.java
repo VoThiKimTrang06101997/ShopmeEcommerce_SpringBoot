@@ -1,4 +1,4 @@
-package com.trang.ShopmeBackEnd_Admin.service;
+package com.trang.ShopmeBackEnd_Admin.service.user;
 
 public class UserNotFoundException extends Exception {
 

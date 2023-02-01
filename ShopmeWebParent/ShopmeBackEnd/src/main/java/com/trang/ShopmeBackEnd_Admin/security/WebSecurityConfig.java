@@ -13,8 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.trang.ShopmeBackEnd_Admin.service.UserService;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfiguration {
@@ -48,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfiguration {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests()
 			.requestMatchers("/users/**").hasAuthority("Admin")
+			.requestMatchers("/categories/**").hasAnyAuthority("Admin", "Editor")
 			.anyRequest().authenticated()
 			.and()
 			.formLogin()

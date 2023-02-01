@@ -1,4 +1,4 @@
-package com.trang.ShopmeBackEnd_Admin.service;
+package com.trang.ShopmeBackEnd_Admin.service.user;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -62,8 +62,7 @@ public class UserService {
 		boolean isUpdatingUser = (user.getId() != null);
 		
 		if (isUpdatingUser) {
-			// User existingUser = userRepository.findById(user.getId()).get();
-			User existingUser = userRepository.findById(user.getId());
+			 User existingUser = userRepository.findById(user.getId()).get();
 			
 			if (user.getPassword().isEmpty()) {
 				user.setPassword(existingUser.getPassword());
@@ -128,8 +127,7 @@ public class UserService {
 
 	public User get(Integer id) throws UserNotFoundException {
 		try {
-			// return (User) userRepository.findById(id).get();
-			return (User) userRepository.findById(id);
+			 return (User) userRepository.findById(id).get();
 		} catch (NoSuchElementException ex) {
 			throw new UserNotFoundException("Could not find any user with ID: " + id);
 		}

@@ -19,7 +19,7 @@ import jakarta.transaction.Transactional;
 
 @Repository
 @EnableJpaRepositories
-public interface UserRepository extends PagingAndSortingRepository<User, Integer> {
+public interface UserRepository extends PagingAndSortingRepository<User, Integer>, CrudRepository<User, Integer> {
 	@Query("SELECT u FROM User u WHERE u.email = :email")
 	public User getUserByEmail(@Param("email") String email);
 	
@@ -34,17 +34,17 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	@Transactional
 	public void updateEnabledStatus(Integer id, boolean enabled);
 
-	public Page<User> findAll(Pageable pageable);
-
-	public List<User> findAll();
-	
-	public User findById(Integer id);
-	
-	public User findById(User user);
-
-	public User save(User user);
-
-	public void deleteById(Integer id);
+//	public Page<User> findAll(Pageable pageable);
+//
+//	public List<User> findAll();
+//	
+//	public User findById(Integer id);
+//	
+//	public User findById(User user);
+//
+//	public User save(User user);
+//
+//	public void deleteById(Integer id);
 
 
 	

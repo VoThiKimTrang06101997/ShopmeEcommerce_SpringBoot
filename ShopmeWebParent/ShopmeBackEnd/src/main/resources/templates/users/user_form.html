@@ -104,26 +104,8 @@
 			</div>
 		</form>
 
-		<!--the uninique email warning diolog box-->
-		<div class="modal fade text-center" id="modalDialog">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title text-success" id="modalTitle">Warning</h4>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-						<span id="modalBody"></span>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!--the end of uninique email warning diolog box-->
+		<!-- Modal -->
+		<div th:replace="modal_fragments :: modal_dialog"></div>
 
 		<!-- Footer -->
 		<div th:replace="fragments :: footer"></div>
@@ -135,81 +117,30 @@
 	
 	moduleURL = "[[@{/users}]]";
 	
-	$(document).ready(function(){
-		$("#buttonEdit").on("click", function() {
-			$("#editAction").click(function checkEmailUnique(form) {
-				function checkEmailUnique(form) {
-					url = "[[@{/users/check_email}]]";
-					userEmail = $("#email").val();
-					userId = $("#id").val();
-					csrfValue = $("input[name='_csrf']").val();
-					
-					params = {id: userId, email: userEmail, _csrf: csrfValue};
-					
-					$.post(url, params, function(response) {
-						if (response == "OK") {
-							form.submit();
-						} else if (response == "Duplicated") {
-							showWarningModal("There is another user having the email " + userEmail);
-						} else {
-							showErrorModal("Unknown response from server");
-						}
-					}).fail(function() {
-						showErrorModal("Could not connect to the server");
-					});
-				
-					return false;
-					
-					function showModalDialog(title, message) {
-						$("#modalTitle").text(title);
-						$("#modalBody").text(message);
-						$("#modalDialog").modal(); 
-					}
-				}
-			})
-		})
-	})
-	</script>
-	
-	
-	<script type="text/javascript">
-		//code for unique email submission from users to the database
-		$(document).ready(function() {
-		$("#buttonEdit").on("click", function() {
-		$("#editAction").click(function checkEmailUnique(form) {
-			url = "[[@{/users/check_email}]]";
-			userEmail = $("#email").val();
-			userId = $("#id").val();
-			csrfValue = $("input[name='_csrf']").val();
-			params = {id : userId,
-					 email : userEmail,
-					 _csrf : csrfValue};
-			$("#modalDialog").modal();
-		});
+	function checkEmailUnique(form) {
+		url = "[[@{/users/check_email}]]";
+		userEmail = $("#email").val();
+		userId = $("#id").val();
+		csrfValue = $("input[name='_csrf']").val();
+		
+		params = {id: userId, email: userEmail, _csrf: csrfValue};
 		
 		$.post(url, params, function(response) {
-				if (response == "OK") {
-					form.submit();
-				} else if (response == "Duplicated") {
-					showModalDialog("Warning", "There is another user using this email " + userEmail);
-				} else {showModalDialog("Error", "Unknown response from server");
-					}  // alert("Response from server: " + response);
-				}).fail(function() {showModalDialog("Error", "Could not connect to the server");
-			});
-				return false;
-
-	 	function showModalDialog(title, message) {
-				$("#modalTitle").text(title);
-				$("#modalBody").text(message);
-				$("#modalDialog").modal(); 
+			if (response == "OK") {
+				form.submit();
+			} else if (response == "Duplicated") {
+				showWarningModal("There is another user having the email " + userEmail);
+			} else {
+				showErrorModal("Unknown response from server");
 			}
+		}).fail(function() {
+			showErrorModal("Could not connect to the server");
 		});
-	});
-	</script>
+		
+		return false;
+	}
+</script>
 	
-	 
-	 
-	 <!-- Chức năng Button Cancel quay trở về trang User -->
 	
 	<!-- Chức năng Upload Image -->
 	<script th:src="@{/javascript/common_form.js}"></script>

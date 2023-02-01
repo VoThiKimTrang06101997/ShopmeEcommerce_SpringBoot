@@ -1,11 +1,11 @@
-package com.trang.ShopmeBackEnd_Admin.controller;
+package com.trang.ShopmeBackEnd_Admin.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trang.ShopmeBackEnd_Admin.service.UserService;
+import com.trang.ShopmeBackEnd_Admin.service.user.UserService;
 
 @RestController
 // @CrossOrigin

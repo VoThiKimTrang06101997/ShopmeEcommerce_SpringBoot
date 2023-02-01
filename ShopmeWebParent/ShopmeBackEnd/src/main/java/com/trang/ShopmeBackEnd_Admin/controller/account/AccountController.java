@@ -1,4 +1,4 @@
-package com.trang.ShopmeBackEnd_Admin.controller;
+package com.trang.ShopmeBackEnd_Admin.controller.account;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.trang.ShopmeBackEnd_Admin.FileUploadUtil;
 import com.trang.ShopmeBackEnd_Admin.security.ShopmeUserDetails;
-import com.trang.ShopmeBackEnd_Admin.service.UserService;
+import com.trang.ShopmeBackEnd_Admin.service.user.UserService;
 import com.trang.ShopmeCommon.entity.User;
 
 @Controller

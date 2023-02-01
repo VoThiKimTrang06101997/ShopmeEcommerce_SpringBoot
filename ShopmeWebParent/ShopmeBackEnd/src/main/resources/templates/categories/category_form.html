@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: page_head(${pageTitle})" />
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: menu"></div>
+
+		<div class="text-danger text-center">
+			<h2>Manage Categories || [[${pageTitle}]]</h2>
+		</div>
+		
+		<div th:if="${message != null}"
+			class="alert alert-success text-center">[[${message}]]
+		</div>
+
+		<form th:action="@{/categories/save}" method="post"
+			style="max-width: 500px; margin: 0 auto" th:object="${category}"
+			enctype="multipart/form-data"
+			onsubmit="return checkUnique(this)"
+			>
+			<input type="hidden" th:field="*{id}" />
+			<div class="border border-secondary rouded p-3">
+				<div class="form-group row">
+					<label class="col sm-4 col-form-label text-success">Category
+						Name:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" th:field="*{name}"
+							required minlength="3" maxlength="128" />
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col sm-4 col-form-label text-success">Alias:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" th:field="*{alias}"
+							required minlength="3" maxlength="64" />
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col sm-4 col-form-label text-success">Parent
+						Category:</label>
+					<div class="col-sm-8">
+						<select class="form-control" th:field="*{parent}">
+							<option value="0">[No Parent]</option>
+
+							<th:block th:each="categories : ${listCategories}">
+								<option th:value="${categories.id}">[[${categories.name}]]</option>
+							</th:block>
+
+						</select>
+					</div>
+				</div>
+				
+				
+				<div class="form-group row">
+					<label class="col sm-4 col-form-label text-success">Image:</label>
+					<div class="col-sm-8">
+						<input type="hidden" th:field="*{image}" /> <a id="fileAction">
+							<input type="file" accept="image/png, image/jpeg"
+							id="fileImage" name="fileImage" class="mb-2" 
+							th:required="${category.imagePath == null}"  />
+							<div class="mt-2">
+								<img id="thumbnail" alt="Image preview" class="img-fluid"
+									th:src="@{${category.imagePath}}" />
+							</div>
+						</a>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col sm-4 col-form-label text-success">Enabled:</label>
+					<div class="col-sm-8">
+						<input type="checkbox" th:field="*{enabled}" />
+					</div>
+				</div>
+
+				<div class="text-center">
+					<a id="editAction"><input type="submit" value="Save"
+						class="btn btn-primary m-3" id="buttonEdit" /> </a> <a
+						id="cancelAction" style="display: hidden" th:href="@{/categories}">
+						<input type="button" value="Cancel" class="btn btn-secondary"
+						id="buttonCancel" />
+					</a>
+				</div>
+			</div>
+		</form>
+
+		<!-- Modal -->
+		<div th:replace="modal_fragments :: modal_dialog"></div>
+
+		<!-- Footer -->
+		<div th:replace="fragments :: footer"></div>
+	</div>
+
+	<!-- JavaScript -->
+	<script type="text/javascript">
+		moduleURL = "[[@{/categories}]]";
+		
+		function checkUnique(form) {
+			categoryId = $("#id").val();
+			categoryName = $("#name").val();
+			categoryAlias = $("#alias").val();
+			
+			csrfValue = $("input[name='_csrf']").val();
+			
+			url = "[[@{/categories/check_unique}]]";
+			
+			params = {id: categoryId, name: categoryName, alias: categoryAlias, _csrf : csrfValue}
+			
+			$.post(url, params, function(response) {
+				if(response == "OK") {
+					form.submit();
+				} else if(response == "DuplicatedName") {
+					showWarningModal("There is another category having the same name: " + categoryName);
+				} else if (response == "DuplicatedAlias") {
+					showWarningModal("There is another category having the same alias: " + categoryAlias);
+				} else {
+					showErrorModal("Unknown response from server");
+				}
+			}).fail(function() {
+				showErrorModal("Could not connect to the server");
+			});
+			
+			return false;
+		}
+	</script>
+	
+	 <!-- Chức năng Button Cancel quay trở về trang Category -->
+	
+
+	<!-- Chức năng Upload Image -->
+	<script th:src="@{/javascript/common_form.js}"></script>
+</body>
+</html>

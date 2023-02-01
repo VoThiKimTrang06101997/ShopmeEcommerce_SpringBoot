@@ -31,7 +31,22 @@ function showImageThumbnail(fileInput) {
 $(document).ready(function() {
 	$("#buttonCancel").on("click", function() {
 		$("#cancelAction").click(function() {
-			window.location = "[[@{/users}]]";
+			window.location = "[[@{/moduleURL}]]";
 		});
 	});
-});		
+});
+
+// Modal 
+function showModalDialog(title, message) {
+	$("#modalTitle").text(title);
+	$("#modalBody").text(message);
+	$("#modalDialog").modal();
+}
+
+function showErrorModal(message) {
+	showModalDialog("Error", message);
+}
+
+function showWarningModal(message) {
+	showModalDialog("Warning", message);
+}
