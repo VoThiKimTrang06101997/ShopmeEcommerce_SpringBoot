@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${pageTitle})"/>
+<body>
+    <div class="container-fluid"></div>
+        <div th:replace="navigation :: menu"></div>
+        <div>
+            <h2 class="text-black-100 m-3 text-danger text-center">
+            	Manage Brands | [[${pageTitle}]]
+            </h2>
+        </div>
+
+        <div class="mt-2">
+            <form th:action="@{/brands/save}" method="post" style="max-width: 550px;margin: 0 auto"
+                  enctype="multipart/form-data" onsubmit="return checkUnique(this)"
+                  th:object="${brand}">
+                <input type="hidden" th:field="*{id}"/>
+                <div class="border border-secondary rounded p-3">
+
+                    <div class="form-group row">
+                            <label class="col-sm-4 col-form-label text-success">Brand Name:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" th:field="*{name}" required minlength="3"
+                                maxlength="128"/>
+                            </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-success">Brand Logo:</label>
+                        <div class="col-sm-8">
+	                        <input type="hidden" th:field="*{logo}" /> 
+	                        <a id="fileAction">
+								 <input type="file" id="fileImage" name="fileImage" accept="image/png, image/jpeg, image/jpg"
+                                   th:required="${brand.id == null}"
+                                   class="mb-3"/>
+	                            <div class="mt-2">
+	                                <img id="thumbnail" alt="Image preview" th:src="@{${brand.logoPath}}" style="width: 100px"
+	                                     class="img-fluid" />
+	                            </div>
+							</a>      
+                        </div>
+                    </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label text-success">Select one or more categories</label>
+                            <div class="col-sm-8">
+
+                                <select class="form-control" multiple required style="resize: vertical; height: 200px" th:field="*{categories}">
+                                    <th:block th:each="category : ${listCategories}">
+                                        <option th:value="${category.id}">[[${category.name}]]</option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-success">Chosen categories:</label>
+                        <div class="col-sm-8">
+                            <div id="chosenCategories"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="submit" value="Save" class="btn btn-primary m-3"/>
+                        <a id="cancelAction" style="display: hidden" th:href="@{/brands}">
+							<input type="button" value="Cancel" class="btn btn-secondary"
+							id="buttonCancel" />
+						</a>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Modal -->
+			<div th:replace="modal_fragments :: modal_dialog"></div>
+	
+			<div th:replace="fragments :: footer"></div>
+   	 </div> 
+  
+    
+    
+<script type="text/javascript">
+    MAX_FILE_SIZE = 102400;
+    moduleURL = "[[@{/brands}]]";
+
+    $(document).ready(function (){
+       dropdownCategories = $("#categories");
+       divChosenCategories = $("#chosenCategories");
+
+        dropdownCategories.change(function (){
+            divChosenCategories.empty();
+            showChosenCategories();
+        });
+        
+        showChosenCategories();
+    });
+
+    function showChosenCategories(){
+        dropdownCategories.children("option:selected").each(function (){
+           selectedCategory =  $(this);
+           categoryId = selectedCategory.val();
+           categoryName = selectedCategory.text().replace(/-/g,"");
+
+           divChosenCategories.append("<span class='badge badge-warning m-1'>" + categoryName+ "</span>");
+        });
+    }
+    
+    function checkUnique(form) {
+        brandId = $("#id").val();
+        brandName = $("#name").val();
+
+        csrfValue = $("input[name='_csrf']").val();
+
+        url = "[[@{/brands/check_unique}]]";
+
+        params = {id: brandId, name: brandName, _csrf: csrfValue};
+
+        $.post(url, params, function(response) {
+            if (response == "OK") {
+                form.submit();
+            } else if (response == "duplicatedBrand") {
+                showWarningModal("There is another brand having same name: " + brandName);
+            } else {
+                showErrorModal("Unknown response from server");
+            }
+
+        }).fail(function() {
+            showErrorModal("Could not connect to the server");
+        });
+
+        return false;
+    }
+
+</script>
+
+
+	<!-- JavaScript -->
+	<script th:src="@{/javascript/common_form.js}"></script>
+	<script th:src="@{/javascript/common_list.js}"></script>
+	<script th:src="@{/javascript/common.js}"></script>
+	
+</body>
+</html>
