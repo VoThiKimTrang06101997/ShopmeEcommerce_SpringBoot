@@ -47,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfiguration {
 		http.authorizeHttpRequests()
 			.requestMatchers("/users/**").hasAuthority("Admin")
 			.requestMatchers("/categories/**", "/brands/**").hasAnyAuthority("Admin", "Editor")
+			.requestMatchers("/products/**").hasAnyAuthority("Admin", "Editor", "Salesperson", "Shipper")
 			.anyRequest().authenticated()
 			.and()
 			.formLogin()

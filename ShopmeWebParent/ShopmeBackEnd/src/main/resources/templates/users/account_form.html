@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments :: page_head('Your Account Details')" />
+<head th:replace="fragments :: page_head('Your Account Details', 'none')" />
 
 <!-- <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %> -->
@@ -131,6 +131,7 @@
 	<!-- JavaScript -->	
 	<!--  Chức năng Upload Image -->
 	<script type="text/javascript">
+	MAX_FILE_SIZE = 502400;    // 500 KB
 	function checkPasswordMatch(confirmPassword) {
 		if(confirmPassword.value != $("#password").val()) {
 			confirmPassword.setCustomValidity("Password do not match!");

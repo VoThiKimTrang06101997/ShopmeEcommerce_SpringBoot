@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
@@ -29,51 +30,31 @@ public class Category {
 
 	@Column(length = 128, nullable = false, unique = true)
 	private String name;
-
+	
 	@Column(length = 64, nullable = false, unique = true)
 	private String alias;
-
+	
 	@Column(length = 128, nullable = false)
 	private String image;
-
+	
 	private boolean enabled;
-
-//	@Column(name = "all_parent_ids", length = 256, nullable = true)
-//	private String allParentIDs;
-
-	@SuppressWarnings("JpaAttributeTypeInspection")
+	
+	@Column(name = "all_parent_ids", length = 256, nullable = true)
+	private String allParentIDs;
+	
 	@OneToOne
 	@JoinColumn(name = "parent_id")
 	private Category parent;
-
-	@SuppressWarnings("JpaAttributeTypeInspection")
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
+	
+	@OneToMany(mappedBy = "parent")
+	@OrderBy("name asc")
 	private Set<Category> children = new HashSet<>();
-
-	// Constructor
-
-//	public Category get() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
 	public Category() {
 	}
-
+	
 	public Category(Integer id) {
 		this.id = id;
-	}
-
-	public Category(String name) {
-		this.name = name;
-		this.alias = name;
-		this.image = "Default_Image";
-	}
-
-	public Category(Integer id, String name, String alias) {
-		this.id = id;
-		this.name = name;
-		this.alias = alias;
 	}
 
 	public static Category copyIdAndName(Category category) {
@@ -113,37 +94,26 @@ public class Category {
 		return copyCategory;
 
 	}
-
+	
+	public Category(String name) {
+		this.name = name;
+		this.alias = name;
+		this.image = "default.png";
+	}
+	
 	public Category(String name, Category parent) {
 		this(name);
 		this.parent = parent;
-	}
+	}	
 
-	public Category(String name, String alias, String image, boolean enabled, Category parent, Set<Category> children) {
+	public Category(Integer id, String name, String alias) {
+		super();
+		this.id = id;
 		this.name = name;
 		this.alias = alias;
-		this.image = image;
-		this.enabled = enabled;
-		this.parent = parent;
-		this.children = children;
-	}
-
-	@Transient
-	public String getImagePath() {
-		if (this.id == null)
-			return "/images/image-thumbnail.png";
-		return "/category-images/" + this.id + "/" + this.image;
 	}
 	
-	@Transient
-	private boolean hasChildren;
-	
-	@Override
-	public String toString() {
-		return this.name;
-	}
-
-	/* getter and setter */
+	/* getter ans setter */
 	public Integer getId() {
 		return id;
 	}
@@ -151,6 +121,7 @@ public class Category {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+	
 
 	public String getName() {
 		return name;
@@ -199,7 +170,14 @@ public class Category {
 	public void setChildren(Set<Category> children) {
 		this.children = children;
 	}
-
+	
+	@Transient
+	public String getImagePath() {
+		if (this.id == null)
+			return "/images/image-thumbnail.png";
+		return "/category-images/" + this.id + "/" + this.image;
+	}
+	
 	public boolean isHasChildren() {
 		return hasChildren;
 	}
@@ -207,4 +185,23 @@ public class Category {
 	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
 	}
+
+	@Transient
+	private boolean hasChildren;
+
+	@Override
+	public String toString() {
+		return this.name;
+	}
+
+	public String getAllParentIDs() {
+		return allParentIDs;
+	}
+
+	public void setAllParentIDs(String allParentIDs) {
+		this.allParentIDs = allParentIDs;
+	}
+	
+	
 }
+

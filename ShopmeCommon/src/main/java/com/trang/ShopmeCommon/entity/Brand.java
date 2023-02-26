@@ -108,4 +108,5 @@ public class Brand {
 				+ categories + '}';
 	}
 
+	
 }
