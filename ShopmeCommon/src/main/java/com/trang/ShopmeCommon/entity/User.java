@@ -1,6 +1,7 @@
 package com.trang.ShopmeCommon.entity;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -24,7 +25,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "users")
-@Data @AllArgsConstructor @NoArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,18 +41,17 @@ public class User {
 
 	@Column(name = "first_name", length = 45, nullable = false)
 	private String firstName;
-	
+
 	@Column(name = "last_name", length = 45, nullable = false)
 	private String lastName;
-	
+
 	@Column(length = 64)
 	private String photos;
-	
+
 	private boolean enabled;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name="users_roles", joinColumns = @JoinColumn(name="user_id"), 
-				inverseJoinColumns = @JoinColumn(name="role_id"))
+	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
 	// Constructor
@@ -60,21 +62,21 @@ public class User {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
-	
+
 	public void addRole(Role role) {
 		this.roles.add(role);
 	}
-	
+
 	// Generate to String
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", roles=" + roles + "]";
 	}
-	
+
 	@Transient
 	public String getPhotosImagePath() {
-		if(id == null || photos == null) {
+		if (id == null || photos == null) {
 			return "/images/Sample Users Photos/default-user.png";
 		}
 		return "/user-photos/" + this.id + "/" + this.photos;
@@ -90,4 +92,15 @@ public class User {
 		return firstName + " " + lastName;
 	}
 
+	public boolean hasRole(String roleName) {
+		Iterator<Role> iterator = roles.iterator();
+		while (iterator.hasNext()) {
+			Role role = iterator.next();
+			if (role.getName().equals(roleName)) {
+				return true;
+			}
+		}
+		return false;
+
+	}
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6:3.1.1.RELEASE">
 <head th:replace="fragments :: page_head('Products - Shopme Admin', 'none')" />
 <body>
 <div class="container-fluid">
@@ -7,16 +8,16 @@
     <div>
         <h2 class="text-danger text-center">Manage Products</h2>
 
-	
-        <a th:href="@{/products/new}"
+		<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+		   <a th:href="@{/products/new}"
 				class="fas fa-user-plus fa-2x icon-dark mr-2 text-primary">
-		</a>
-		&nbsp;|&nbsp; 
-		<a th:href="@{/products/export/csv}"
-				class="fas fa-file-csv fa-2x icon-dark mr-2 text-warning">
-		</a>
-		&nbsp;|&nbsp;
-		
+		   </a>
+			&nbsp;|&nbsp; 
+			<a th:href="@{/products/export/csv}"
+					class="fas fa-file-csv fa-2x icon-dark mr-2 text-warning">
+			</a>
+			&nbsp;|&nbsp;
+		</th:block>	
     </div>
     
     <div>
@@ -62,22 +63,22 @@
 			<thead class="thead-dark">
 				<tr>
 					<th class="hideable-column"> 
-					<th th:replace="fragments :: column_link('/products', 'id', 'ID', 'tag')" />
+						<th th:replace="fragments :: column_link('/products', 'id', 'ID', 'tag')" />
 					</th>
 					
 					<th>Main Image</th>
 					<th th:replace="fragments :: column_link('/products', 'name', 'Product Name', 'none')" />
 					
 					<th class="hideable-column"> 
-					<th th:replace="fragments :: column_link('/products', 'brand', 'Brand', 'tag')" />
+						<th th:replace="fragments :: column_link('/products', 'brand', 'Brand', 'tag')" />
 					</th>
 					
 					<th class="hideable-column">
-					<th th:replace="fragments :: column_link('/products', 'category', 'Category', 'tag')" />
+						<th th:replace="fragments :: column_link('/products', 'category', 'Category', 'tag')" />
 					</th>
 					
 					<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
-					<th>Enabled</th>
+						<th>Enabled</th>
 					</th:block>
 					
 					<th></th>
